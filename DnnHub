@@ -1,4 +1,5 @@
--- đỉnh
+
+-- Good
 local Players = game:GetService("Players")
 local RunService = game:GetService("RunService")
 local CoreGui = game:GetService("CoreGui")
@@ -131,82 +132,374 @@ local function createTab(name)
 	return frame
 end
 
--- MISS TAB (Speed + Infinite Jump)
+-- MISS TAB 
+local Players = game:GetService("Players")
+local LocalPlayer = Players.LocalPlayer
+local UserInputService = game:GetService("UserInputService")
+local Humanoid = LocalPlayer.Character:WaitForChild("Humanoid")
 
 local missTab = createTab("Miss")
 
--- Tốc độ
+-- Speed
 local speedBox = Instance.new("TextBox", missTab)
-speedBox.PlaceholderText = "Input Speed"
-speedBox.Size = UDim2.new(0, 150, 0, 28)
-speedBox.Position = UDim2.new(0, 10, 0, 10)
+speedBox.PlaceholderText = "Speed"
+speedBox.Size = UDim2.new(0, 60, 0, 22)
+speedBox.Position = UDim2.new(0, 5, 0, 5)
 speedBox.Font = Enum.Font.Gotham
-speedBox.TextSize = 14
+speedBox.TextSize = 12
+speedBox.BackgroundColor3 = Color3.fromRGB(60, 60, 60)
 speedBox.TextColor3 = Color3.new(1,1,1)
-speedBox.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
-speedBox.Text = ""
 
-local speedToggle = Instance.new("TextButton", missTab)
-speedToggle.Size = UDim2.new(0, 100, 0, 28)
-speedToggle.Position = UDim2.new(0, 170, 0, 10)
-speedToggle.Text = "Speed OFF"
-speedToggle.BackgroundColor3 = Color3.fromRGB(150, 0, 0)
-speedToggle.TextColor3 = Color3.new(1,1,1)
-speedToggle.Font = Enum.Font.GothamBold
-speedToggle.TextSize = 14
+local speedBtn = Instance.new("TextButton", missTab)
+speedBtn.Size = UDim2.new(0, 60, 0, 22)
+speedBtn.Position = UDim2.new(0, 70, 0, 5)
+speedBtn.Text = "Speed"
+speedBtn.Font = Enum.Font.GothamBold
+speedBtn.TextSize = 12
+speedBtn.BackgroundColor3 = Color3.fromRGB(150, 0, 0)
+speedBtn.TextColor3 = Color3.new(1,1,1)
 
 local speedEnabled = false
-speedToggle.MouseButton1Click:Connect(function()
+speedBtn.MouseButton1Click:Connect(function()
 	speedEnabled = not speedEnabled
-	speedToggle.Text = speedEnabled and "Speed ON" or "Speed OFF"
-	speedToggle.BackgroundColor3 = speedEnabled and Color3.fromRGB(0,170,0) or Color3.fromRGB(150,0,0)
-
-	if speedEnabled then
-		-- Bật speed
-		local speed = tonumber(speedBox.Text)
-		if speed and speed > 0 then
-			Humanoid.WalkSpeed = speed
-		else
-			Humanoid.WalkSpeed = 16
-		end
-	else
-		-- Tắt speed → reset về mặc định
-		Humanoid.WalkSpeed = 16
-	end
+	speedBtn.BackgroundColor3 = speedEnabled and Color3.fromRGB(0, 170, 0) or Color3.fromRGB(150, 0, 0)
+	local val = tonumber(speedBox.Text)
+	Humanoid.WalkSpeed = (speedEnabled and val and val > 0) and val or 16
 end)
 
--- Tự động cập nhật tốc độ
 speedBox.FocusLost:Connect(function()
-	local speed = tonumber(speedBox.Text)
-	if speedEnabled and speed and speed > 0 then
-		Humanoid.WalkSpeed = speed
+	if speedEnabled then
+		local val = tonumber(speedBox.Text)
+		if val then Humanoid.WalkSpeed = val end
 	end
 end)
 
 -- Infinite Jump
-local infJumpToggle = Instance.new("TextButton", missTab)
-infJumpToggle.Size = UDim2.new(0, 260, 0, 28)
-infJumpToggle.Position = UDim2.new(0, 10, 0, 50)
-infJumpToggle.Text = "Infinite Jump: OFF"
-infJumpToggle.BackgroundColor3 = Color3.fromRGB(150, 0, 0)
-infJumpToggle.TextColor3 = Color3.new(1,1,1)
-infJumpToggle.Font = Enum.Font.GothamBold
-infJumpToggle.TextSize = 14
+local infJump = false
+local jumpBtn = Instance.new("TextButton", missTab)
+jumpBtn.Size = UDim2.new(0, 60, 0, 22)
+jumpBtn.Position = UDim2.new(0, 135, 0, 5)
+jumpBtn.Text = "Jump"
+jumpBtn.Font = Enum.Font.GothamBold
+jumpBtn.TextSize = 12
+jumpBtn.BackgroundColor3 = Color3.fromRGB(150, 0, 0)
+jumpBtn.TextColor3 = Color3.new(1,1,1)
 
-local infJumpEnabled = false
-infJumpToggle.MouseButton1Click:Connect(function()
-	infJumpEnabled = not infJumpEnabled
-	infJumpToggle.Text = infJumpEnabled and "Infinite Jump: ON" or "Infinite Jump: OFF"
-	infJumpToggle.BackgroundColor3 = infJumpEnabled and Color3.fromRGB(0, 170, 0) or Color3.fromRGB(150, 0, 0)
+jumpBtn.MouseButton1Click:Connect(function()
+	infJump = not infJump
+	jumpBtn.BackgroundColor3 = infJump and Color3.fromRGB(0, 170, 0) or Color3.fromRGB(150, 0, 0)
 end)
 
--- Kích hoạt Infinite Jump
-local UserInputService = game:GetService("UserInputService")
 UserInputService.JumpRequest:Connect(function()
-	if infJumpEnabled and Humanoid then
+	if infJump then
 		Humanoid:ChangeState(Enum.HumanoidStateType.Jumping)
 	end
 end)
+
+-- Fix Lag
+local fixBtn = Instance.new("TextButton", missTab)
+fixBtn.Size = UDim2.new(0, 60, 0, 22)
+fixBtn.Position = UDim2.new(0, 5, 0, 33)
+fixBtn.Text = "Fix Lag"
+fixBtn.Font = Enum.Font.GothamBold
+fixBtn.TextSize = 12
+fixBtn.BackgroundColor3 = Color3.fromRGB(150, 0, 0)
+fixBtn.TextColor3 = Color3.new(1, 1, 1)
+
+fixBtn.MouseButton1Click:Connect(function()
+	fixBtn.BackgroundColor3 = Color3.fromRGB(0, 170, 0)
+
+	local Lighting = game:GetService("Lighting")
+	local Workspace = game:GetService("Workspace")
+	local Terrain = Workspace:FindFirstChildOfClass("Terrain")
+	local Players = game:GetService("Players")
+
+	-- Tắt hiệu ứng + giảm chi tiết
+	for _, obj in ipairs(Workspace:GetDescendants()) do
+		if obj:IsA("ParticleEmitter") or obj:IsA("Trail") or obj:IsA("Smoke") or obj:IsA("Fire") then
+			obj.Enabled = false
+		elseif obj:IsA("Decal") or obj:IsA("Texture") then
+			obj.Transparency = 1
+		elseif obj:IsA("PointLight") or obj:IsA("SpotLight") or obj:IsA("SurfaceLight") then
+			obj.Enabled = false
+		elseif obj:IsA("Sound") then
+			obj.Volume = 0
+		elseif obj:IsA("MeshPart") then
+			obj.Material = Enum.Material.Plastic
+			obj.Reflectance = 0
+		elseif obj:IsA("UnionOperation") or obj:IsA("Part") or obj:IsA("WedgePart") then
+			obj.Material = Enum.Material.SmoothPlastic
+			obj.Reflectance = 0
+		end
+	end
+
+	-- Tắt shadow, chỉnh ánh sáng
+	Lighting.GlobalShadows = false
+	Lighting.FogEnd = 1e10
+	Lighting.Brightness = 0
+	Lighting.OutdoorAmbient = Color3.fromRGB(0, 0, 0)
+	Lighting.EnvironmentDiffuseScale = 0
+	Lighting.EnvironmentSpecularScale = 0
+
+	-- Terrain
+	if Terrain then
+		Terrain.WaterWaveSize = 0
+		Terrain.WaterWaveSpeed = 0
+		Terrain.WaterReflectance = 0
+		Terrain.WaterTransparency = 1
+	end
+
+	-- Tắt clothing & accessories
+	for _, plr in ipairs(Players:GetPlayers()) do
+		if plr ~= Players.LocalPlayer and plr.Character then
+			for _, item in ipairs(plr.Character:GetDescendants()) do
+				if item:IsA("Accessory") or item:IsA("Clothing") then
+					item:Destroy()
+				end
+			end
+		end
+	end
+
+	-- Tắt camera effects
+	local camera = Workspace.CurrentCamera
+	if camera:FindFirstChildOfClass("BlurEffect") then
+		camera:FindFirstChildOfClass("BlurEffect"):Destroy()
+	end
+end)
+
+-- Nút trong Tab Miss để tạo hoặc xóa Tool
+
+local tpBtn = Instance.new("TextButton", missTab)
+
+tpBtn.Size = UDim2.new(0, 60, 0, 22)
+tpBtn.Position = UDim2.new(0, 200, 0, 5)
+tpBtn.Text = "TPTool:OFF"
+tpBtn.Font = Enum.Font.GothamBold
+tpBtn.TextSize = 12
+tpBtn.BackgroundColor3 = Color3.fromRGB(150, 0, 0)
+tpBtn.TextColor3 = Color3.new(1,1,1)
+
+local toolExists = false
+
+tpBtn.MouseButton1Click:Connect(function()
+	local backpack = Players.LocalPlayer:FindFirstChild("Backpack")
+	local playerGui = Players.LocalPlayer:FindFirstChild("PlayerGui")
+
+	if not toolExists and not backpack:FindFirstChild("Teleport Tool") then
+		toolExists = true
+		tpBtn.Text = "TPTool:ON"
+		tpBtn.BackgroundColor3 = Color3.fromRGB(0, 170, 0)
+
+		-- Tạo tool
+		local tool = Instance.new("Tool")
+		tool.Name = "Teleport Tool"
+		tool.RequiresHandle = false
+		tool.CanBeDropped = false
+		tool.Parent = backpack
+
+		-- GUI
+		local gui = Instance.new("ScreenGui", playerGui)
+		gui.Name = "TeleportMenu"
+		gui.ResetOnSpawn = false
+		gui.Enabled = false
+
+		-- Menu chính
+local frame = Instance.new("Frame", gui)
+frame.Size = UDim2.new(0, 260, 0, 230)
+frame.Position = UDim2.new(0.5, -130, 0.5, -115)
+frame.BackgroundColor3 = Color3.fromRGB(10, 10, 10)
+frame.BackgroundTransparency = 0.25
+frame.BorderSizePixel = 0
+frame.Active = true
+frame.Draggable = true
+Instance.new("UICorner", frame).CornerRadius = UDim.new(0, 8)
+
+-- Viền trong
+local innerBorder = Instance.new("Frame", frame)
+innerBorder.Size = UDim2.new(1, -4, 1, -4)
+innerBorder.Position = UDim2.new(0, 2, 0, 2)
+innerBorder.BackgroundTransparency = 1
+Instance.new("UICorner", innerBorder).CornerRadius = UDim.new(0, 8)
+
+-- Tiêu đề
+local title = Instance.new("TextLabel", frame)
+title.Size = UDim2.new(1, 0, 0, 26)
+title.Text = " Tìm người để dịch chuyển"
+title.Font = Enum.Font.GothamBold
+title.TextSize = 13
+title.TextColor3 = Color3.fromRGB(255, 255, 255)
+title.BackgroundTransparency = 1
+title.TextXAlignment = Enum.TextXAlignment.Center
+
+-- Ô nhập tìm kiếm
+local searchBox = Instance.new("TextBox", frame)
+searchBox.PlaceholderText = "Nhập tên hoặc @username..."
+searchBox.Size = UDim2.new(1, -20, 0, 22)
+searchBox.Position = UDim2.new(0, 10, 0, 30)
+searchBox.Font = Enum.Font.Gotham
+searchBox.TextSize = 12
+searchBox.Text = ""
+searchBox.BackgroundColor3 = Color3.fromRGB(35, 35, 35)
+searchBox.TextColor3 = Color3.new(1,1,1)
+Instance.new("UICorner", searchBox).CornerRadius = UDim.new(0, 6)
+
+-- Danh sách cuộn
+local scroll = Instance.new("ScrollingFrame", frame)
+scroll.Size = UDim2.new(1, -20, 1, -64)
+scroll.Position = UDim2.new(0, 10, 0, 58)
+scroll.CanvasSize = UDim2.new(0, 0, 0, 0)
+scroll.AutomaticCanvasSize = Enum.AutomaticSize.Y
+scroll.ScrollBarThickness = 4
+scroll.BackgroundColor3 = Color3.fromRGB(20, 20, 20)
+scroll.BackgroundTransparency = 0.2
+Instance.new("UICorner", scroll).CornerRadius = UDim.new(0, 6)
+
+local layout = Instance.new("UIListLayout", scroll)
+layout.SortOrder = Enum.SortOrder.LayoutOrder
+layout.Padding = UDim.new(0, 6)
+
+-- Giao diện người chơi
+local function createPlayerEntry(p)
+	local btn = Instance.new("Frame", scroll)
+	btn.Size = UDim2.new(1, 0, 0, 48)
+	btn.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+	btn.BackgroundTransparency = 0.1
+	Instance.new("UICorner", btn).CornerRadius = UDim.new(0, 6)
+
+	local thumb = Players:GetUserThumbnailAsync(p.UserId, Enum.ThumbnailType.HeadShot, Enum.ThumbnailSize.Size48x48)
+	local img = Instance.new("ImageLabel", btn)
+	img.Size = UDim2.new(0, 36, 0, 36)
+	img.Position = UDim2.new(0, 6, 0, 6)
+	img.Image = thumb
+	img.BackgroundTransparency = 1
+
+	local nameLbl = Instance.new("TextLabel", btn)
+	nameLbl.Size = UDim2.new(1, -100, 0, 20)
+	nameLbl.Position = UDim2.new(0, 48, 0, 4)
+	nameLbl.Text = p.DisplayName
+	nameLbl.Font = Enum.Font.GothamBold
+	nameLbl.TextSize = 12
+	nameLbl.TextColor3 = Color3.fromRGB(255, 255, 255)
+	nameLbl.BackgroundTransparency = 1
+	nameLbl.TextXAlignment = Enum.TextXAlignment.Left
+
+	local userLbl = Instance.new("TextLabel", btn)
+	userLbl.Size = UDim2.new(1, -100, 0, 16)
+	userLbl.Position = UDim2.new(0, 48, 0, 24)
+	userLbl.Text = "@" .. p.Name .. " | ID: " .. tostring(p.UserId)
+	userLbl.Font = Enum.Font.Gotham
+	userLbl.TextSize = 11
+	userLbl.TextColor3 = Color3.fromRGB(160, 160, 160)
+	userLbl.BackgroundTransparency = 1
+	userLbl.TextXAlignment = Enum.TextXAlignment.Left
+
+	local selectBtn = Instance.new("TextButton", btn)
+	selectBtn.Size = UDim2.new(0, 44, 0, 24)
+	selectBtn.Position = UDim2.new(1, -50, 0.5, -12)
+	selectBtn.Text = "Chọn"
+	selectBtn.Font = Enum.Font.GothamBold
+	selectBtn.TextSize = 11
+	selectBtn.TextColor3 = Color3.new(1, 1, 1)
+	selectBtn.BackgroundColor3 = Color3.fromRGB(80, 80, 80)
+	Instance.new("UICorner", selectBtn).CornerRadius = UDim.new(0, 5)
+
+	selectBtn.MouseButton1Click:Connect(function()
+	if selectedPlayer == p then
+		-- Nếu đang chọn người này → hủy chọn
+		selectedPlayer = nil
+		selectBtn.BackgroundColor3 = Color3.fromRGB(80, 80, 80)
+	else
+		-- Chọn người mới
+		selectedPlayer = p
+		for _, child in ipairs(scroll:GetChildren()) do
+			if child:IsA("Frame") then
+				local btn = child:FindFirstChildWhichIsA("TextButton")
+				if btn then
+					btn.BackgroundColor3 = Color3.fromRGB(80, 80, 80)
+				end
+			end
+		end
+		selectBtn.BackgroundColor3 = Color3.fromRGB(0, 170, 0)
+	end
+end)
+end
+		local function refreshList(filter)
+	-- Giữ lại layout, xóa các player entry
+	for _, v in ipairs(scroll:GetChildren()) do
+		if not v:IsA("UIListLayout") then
+			v:Destroy()
+		end
+	end
+
+	layout.Parent = scroll
+	filter = (filter or ""):lower()
+
+	for _, p in ipairs(Players:GetPlayers()) do
+		if p ~= LocalPlayer then
+			local name = p.Name:lower()
+			local display = p.DisplayName:lower()
+
+			-- Gợi ý thông minh nếu tên chứa hoặc bắt đầu bằng ký tự nhập
+			if filter == "" or name:match(filter) or display:match(filter) then
+				createPlayerEntry(p)
+			end
+		end
+	end
+end
+
+		searchBox:GetPropertyChangedSignal("Text"):Connect(function()
+			refreshList(searchBox.Text)
+		end)
+-- Tự động cập nhật danh sách khi có người mới vào
+Players.PlayerAdded:Connect(function()
+	if gui and gui.Enabled then
+		refreshList(searchBox.Text)
+	end
+end)
+
+-- Tự động cập nhật danh sách khi có người rời
+Players.PlayerRemoving:Connect(function()
+	if gui and gui.Enabled then
+		refreshList(searchBox.Text)
+	end
+end)
+
+		local lastEquipTime = 0
+		tool.Equipped:Connect(function()
+			local now = tick()
+			if now - lastEquipTime < 0.5 then
+				gui.Enabled = not gui.Enabled
+			if gui.Enabled then
+	                    searchBox.Text = "" -- reset ô tìm
+	                    refreshList("")
+                        end
+			end
+			lastEquipTime = now
+		end)
+
+		tool.Activated:Connect(function()
+			if selectedPlayer and selectedPlayer.Character and selectedPlayer.Character:FindFirstChild("HumanoidRootPart") then
+				LocalPlayer.Character:MoveTo(selectedPlayer.Character.HumanoidRootPart.Position + Vector3.new(3, 0, 0))
+			end
+		end)
+
+	else
+		toolExists = false
+		tpBtn.Text = "TPTool:OFF"
+		tpBtn.BackgroundColor3 = Color3.fromRGB(150, 0, 0)
+
+		local backpack = Players.LocalPlayer:FindFirstChild("Backpack")
+		local gui = Players.LocalPlayer:FindFirstChild("PlayerGui"):FindFirstChild("TeleportMenu")
+
+		if backpack and backpack:FindFirstChild("Teleport Tool") then
+			backpack:FindFirstChild("Teleport Tool"):Destroy()
+		end
+		if gui then
+			gui:Destroy()
+		end
+	end
+end)
+
 
 -- ESP TAB
 local Players = game:GetService("Players")
